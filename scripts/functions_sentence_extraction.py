@@ -27,79 +27,18 @@ from collections import Counter
 import os
 
 ###############################################################################
-# Functions
+# Function
 ###############################################################################
 
 
+def get_list_words_end_dot_provided():
+    return ['dr.', 'mr.', 'bro.', 'bro', 'mrs.', 'ms.',                                
+        'jr.', 'sr.', 'e.g.', 'vs.', 'u.s.',                                    
+        'etc.', 'j.p.', 'inc.', 'llc.', 'co.', 'l.p.',                          
+        'ltd.', 'jan.', 'feb.', 'mar.', 'apr.', 'i.e.',                         
+        'jun.', 'jul.', 'aug.', 'oct.', 'dec.', 's.e.c.',                       
+        'inv. co. act']  
 
-def load_file(filename, directory, project_folder=None):
-    """
-    Generic function load Excel and CSV files.
-
-    Parameters
-    ----------
-    filename : TYPE
-        DESCRIPTION.
-    directory : TYPE
-        DESCRIPTION.
-    project_folder : TYPE, optional
-        DESCRIPTION. The default is None.
-
-    Returns
-    -------
-    Dataframe
-
-    """
-    start = datetime.now()
-    logging.info(f'Loading File => {filename}')
-    # Define Path 2 File
-    if project_folder:
-        path = directory + '/' + project_folder + '/' + filename
-    else:
-        path = directory + '/' + filename
-
-    # Load Data
-    if '.csv' in filename:
-        data = pd.read_csv(path)
-    elif '.xlsx' in filename:
-        data = pd.read_excel(path)
-    else:
-        logging.warning('This function can only load Excel of CSV files')
-
-    # Return data
-    duration = round((datetime.now() - start).total_seconds(), 3)
-    logging.info('Data loaded.  Shape => {}, Duration => {}\n\n'.format(
-        data.shape, duration))
-    return data
-
-def write2csv(dataframe, dir_output, project_folder=None, filename=''):
-    """
-    Generic function write dataframe to csv.
-
-    Parameters
-    ----------
-    dataframe : TYPE
-        DESCRIPTION.
-    dir_output : TYPE
-        DESCRIPTION.
-    filename : TYPE
-        DESCRIPTION.
-    project_folder : TYPE, optional
-        DESCRIPTION. The default is None.
-
-    Returns
-    -------
-    None.
-
-    """
-    if project_folder:
-        path = dir_output + '/' + project_folder + '/' + filename
-    else:
-        path = dir_output + '/' + filename
-    
-    dataframe.to_csv(path)
-    logging.info(f'---- {filename} writen to directory {dir_output}')
-   
 
 def get_count_word_end_dot(data, sample_pct, num, dir_output, project_folder,
                            write2file):
@@ -166,36 +105,5 @@ def get_count_word_end_dot(data, sample_pct, num, dir_output, project_folder,
     duration = round((datetime.now() - start).total_seconds(), 3)
     logging.info('Function completed.  Duration => {}\n\n'.format(duration))
     return cnt_wrds_end_dot
-
-
-
-def create_project_folder(dir_output, name):
-    """
-    Generic function to create a project folder in the output directory.
-
-    Parameters
-    ----------
-    dir_output : TYPE
-        DESCRIPTION.
-    name : TYPE
-        DESCRIPTION.
-
-    Returns
-    -------
-    path : TYPE
-        DESCRIPTION.
-
-    """
-    logging.info(f'Creating project folder => {name}')
-    path = dir_output + '/' + name
-    try:
-        os.mkdir(path)
-        logging.info(f'---- Project folder created => {path}\n\n')
-
-    except FileExistsError as err:
-        logging.error(f'---- {name} directory already exists\n\n')
-    return name            
-
-
 
 

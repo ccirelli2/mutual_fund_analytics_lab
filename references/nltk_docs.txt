@@ -1,0 +1,7 @@
+
+# How to fit sentence tokenizer
+	https://github.com/nltk/nltk/blob/develop/nltk/tokenize/punkt.py
+
+
+
+
