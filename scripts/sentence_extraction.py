@@ -91,6 +91,8 @@ def sentence_segmenter(data, sample_pct, dir_output, write2file):
     data.dropna(subset=['principal_risks'], inplace=True)
     # Create Sample of Data
     if sample_pct < 1.0:
+        logging.info('---- Creating sample of dataset => {}'.format(
+            sample_pct))
         data = data.sample(frac=sample_pct, random_state=1)
     # Get List of Sentences
     list_paragraphs = data['principal_risks'].values.tolist()
@@ -157,14 +159,17 @@ def sentence_segmenter(data, sample_pct, dir_output, write2file):
     # Write Results to Output Directory & Return 
     ###########################################################################
     if write2file:
-        m_utility.write2csv(df_sentences, dir_output, project_folder,
-                filename='sentences.csv')
+        if sample_pct < 1.0:
+            filename=f'test_results_sample_pct_{sample_pct}.xlsx'
+        else:
+            filename='sentences_all_results.xlsx'
+        m_utility.write2excel(df_sentences, dir_output, project_folder, filename)
     # Return Results
     duration = round((datetime.now() - start).total_seconds(), 3)               
     logging.info('Function completed.  Duration => {}\n\n'.format(duration))
     return df_sentences
 
-sentence_segmenter(data, 0.025, dir_output, write2file=False)
+sentence_segmenter(data, 0.025, dir_output, write2file=True)
 
 
 

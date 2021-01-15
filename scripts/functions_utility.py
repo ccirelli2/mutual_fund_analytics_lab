@@ -99,7 +99,36 @@ def write2csv(dataframe, dir_output, project_folder=None, filename=''):
  
     dataframe.to_csv(path)
     logging.info(f'---- {filename} writen to directory {dir_output}')
-   
+
+
+def write2excel(dataframe, dir_output, project_folder=None, filename=''):
+    """
+    Generic function write dataframe to csv.
+
+    Parameters
+    ----------
+    dataframe : TYPE
+        DESCRIPTION.
+    dir_output : TYPE
+        DESCRIPTION.
+    filename : TYPE
+        DESCRIPTION.
+    project_folder : TYPE, optional
+        DESCRIPTION. The default is None.
+
+    Returns
+    -------
+    None.
+
+    """
+    if project_folder:
+        path = dir_output + '/' + project_folder + '/' + filename
+    else:
+        path = dir_output + '/' + filename
+ 
+    dataframe.to_excel(path)
+    logging.info(f'---- {filename} writen to directory {dir_output}')
+
 
 def create_project_folder(dir_output, name):
     """
