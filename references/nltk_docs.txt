@@ -2,6 +2,11 @@
 # How to fit sentence tokenizer
 	https://github.com/nltk/nltk/blob/develop/nltk/tokenize/punkt.py
 
+# Explanation
+https://subscription.packtpub.com/book/application_development/9781782167853/1/ch01lvl1sec12/training-a-sentence-tokenizer
+
+
+
 
 
 

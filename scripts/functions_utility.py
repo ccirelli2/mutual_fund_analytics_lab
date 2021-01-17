@@ -98,7 +98,7 @@ def write2csv(dataframe, dir_output, project_folder=None, filename=''):
         path = dir_output + '/' + filename
  
     dataframe.to_csv(path)
-    logging.info(f'---- {filename} writen to directory {dir_output}')
+    logging.debug(f'---- {filename} writen to directory {dir_output}')
 
 
 def write2excel(dataframe, dir_output, project_folder=None, filename=''):
