@@ -31,44 +31,9 @@ from functions_decorators import *
 ###############################################################################
 
 
-@my_timeit                                                                      
-def train_nltk_sentence_tokenizer(paragraphs, print_abbrevs=False):       
-    """                                                                         
-    Function to train NLTK PunctSentTokenizer Class on unique body of text.     
-                                                                                
-    Supposed to work better than out of box sent tokenizer                      
-                                                                                
-    Args:
-    paragraphs : paragraphs on which to train tokenizer
-    print_abbrevs : if you want to print the abbreviations that were
-                    identified by the the trained tokenizer
-    Returns :                                                                   
-    -------------                                                               
-    trained sentence tokenizer                                                  
-    """                                                                         
-    # Ensure that paragraphs are strings                                                           
-    paragraphs = [str(x) for x in paragraphs]
-    # Join all paragraphs into a single body of text
-    raw_text = ''.join(paragraphs)                                              
-                                                                                
-    # Instantiate & Train Tokenizer Training Class                              
-    trainer = PunktTrainer()                                                    
-    trainer.train(raw_text)                                                     
-    trainer.finalize_training()                                                 
-    params = trainer.get_params()                                               
-                                                                                
-    if print_abbrevs:                                                           
-        abbrevs = params.abbrev_types                                           
-        print(abbrevs)                                                          
-                                                                                
-    # Add Trained Parameters To Sentence Tokenizer                              
-    sent_tokenizer = PunktSentenceTokenizer(params)                             
-                                                                                
-    # Return Tokenizer                                                          
-    return sent_tokenizer                                                       
                                    
 
-
+@my_timeit
 def get_list_words_end_dot_provided():
     return ['dr.', 'mr.', 'bro.', 'bro', 'mrs.', 'ms.',                                
             'jr.', 'sr.', 'e.g.', 'vs.', 'u.s.',                                    
@@ -129,8 +94,47 @@ def get_tokens_end_dot(data, num, dir_output, project_folder,
                   f'sample_set_words_ending_{num}_dot.csv')
 
     # Return Results
-    duration = round((datetime.now() - start).total_seconds(), 3)               
     return cnt_wrds_end_dot
+
+
+@my_timeit
+def train_nltk_sentence_tokenizer(paragraphs, print_abbrevs=False):       
+    """                                                                         
+    Function to train NLTK PunctSentTokenizer Class on unique body of text.     
+                                                                                
+    Supposed to work better than out of box sent tokenizer                      
+                                                                                
+    Args:
+    paragraphs : paragraphs on which to train tokenizer
+    print_abbrevs : if you want to print the abbreviations that were
+                    identified by the the trained tokenizer
+    Returns :                                                                   
+    -------------                                                               
+    trained sentence tokenizer                                                  
+    """                                                                         
+    # Ensure that paragraphs are strings
+    paragraphs = [str(x) for x in paragraphs]
+    # Join all paragraphs into a single body of text
+    raw_text = ''.join(paragraphs)                                              
+                                                                                
+    # Instantiate & Train Tokenizer Training Class                              
+
+    # Manually Add abbreviations
+    abbrevs = """llc., e.g., u.s., i.e., n.a., p.o., j.p., a.m., p.m., u.k.,
+    dr., mr., bro., bro, mrs., ms., jr., sr., e.g., vs., etc., j.p., inc.,
+    llc., co., l.p., ltd., jan., feb., mar., apr., i.e., jun., jul., aug.,
+    oct., dec., s.e.c., inv. co. act, fmr llc., (i.e."""
+    trainer = PunktTrainer()
+    # Train on raw text
+    trainer.train(raw_text, finalize=False, verbose=True)
+    # Add additional bbreviations
+    trainer.train(abbrevs, finalize=False, verbose=True)
+    # Finalize Tokenizer
+    tokenizer = PunktSentenceTokenizer(trainer.get_params())
+
+    # Return Tokenizer                                                          
+    return tokenizer                                                       
+
 
 
 @my_timeit
@@ -173,7 +177,6 @@ def get_sentences_max_num_tokens_chars(df_sentences, max_num_tokens,
         write2csv(df_sent_min_chars, dir_output, project_folder, filename)
     
     # Results
-    duration = round((datetime.now() - start).total_seconds(), 3)               
     return df_sent_min_toks, df_sent_min_chars
 
 
@@ -222,14 +225,16 @@ def get_incorrectly_tokenized_sentences(df_sentences, dir_output,
         sent = df_sentences['sentences'].values.tolist()[i]                               
         
         # Tokenize Sentence                                                     
-        tokens = word_tokenize(sent)                                            
-        try:                                                                    
-            if ''.join(tokens[-2] + tokens[-1]) in tokens_all_dots:             
-                pkey_list.append(pkey)
-                result_sentences.append(sent)                                   
-                result_token.append(tokens[-2] + tokens[-1])                    
-        except IndexError:                                                      
-            pass                                                                
+        tokens = word_tokenize(sent)
+        num_toks = 3
+        if len(tokens) >= num_toks:
+            try:                                                                    
+                if ''.join(tokens[-2] + tokens[-1]) in tokens_all_dots:             
+                    pkey_list.append(pkey)
+                    result_sentences.append(sent)                                   
+                    result_token.append(tokens[-2] + tokens[-1]) 
+            except IndexError:                                                      
+                pass                                                                
                                                                                 
     df_results = pd.DataFrame({
         'accession#':pkey_list,
@@ -255,6 +260,7 @@ def get_incorrectly_tokenized_sentences(df_sentences, dir_output,
     
     # Return Results
     return df_results
+
 
 @my_timeit
 def tokenizer_quality_control(df_sentences, max_num_tokens, max_num_chars,      
@@ -315,6 +321,7 @@ def get_paragraphs_for_incorrectly_tokenized_sentences(
     
     # Return Results                                                            
     return df_paragraphs
+
 
 @my_timeit
 def sentence_segmenter(data, sample_pct, mode, max_num_tokens, max_num_chars,

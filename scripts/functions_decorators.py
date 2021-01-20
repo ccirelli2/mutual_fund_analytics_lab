@@ -26,7 +26,8 @@ def my_timeit(f):
         start = datetime.now()                                                  
         response = f(*args, **kwargs)                                           
         duration = (datetime.now() - start).total_seconds()                     
-        logging.info(f'{f.__name__} finished.  Duration => {duration}')         
+        logging.info(f'{f.__name__} finished.  Duration => {duration}')
+        logging.info('\n\n')
         return response                                                         
     return wrapped
 
