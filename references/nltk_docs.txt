@@ -6,6 +6,9 @@
 https://subscription.packtpub.com/book/application_development/9781782167853/1/ch01lvl1sec12/training-a-sentence-tokenizer
 
 
+How to add abbreviations to trainer
+https://stackoverflow.com/questions/64776093/how-to-get-nltk-punkt-sentence-tokenizer-to-recognize-abbreviations-that-occur-i
+
 
 
 
