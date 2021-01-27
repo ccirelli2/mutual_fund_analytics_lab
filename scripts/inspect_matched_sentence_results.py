@@ -21,6 +21,7 @@ from collections import Counter
 import string
 import copy
 from random import randint
+import matplotlib.pyplot as plt
 
 from nltk import ngrams
 from nltk.tokenize import word_tokenize
@@ -38,7 +39,7 @@ pd.set_option('display.max_rows', None)
 ###############################################################################
 # Declare Variables
 ###############################################################################
-dir_data = r'/home/cc2/Desktop/repositories/mutual_fund_analytics_lab/data'
+dir_data = r'/home/cc2/Desktop/repositories/mutual_fund_analytics_lab/results/matching_sentences'
 dir_scripts = r'/home/cc2/Desktop/repositories/mutual_fund_analytics_lab/scripts'
 dir_output = r'/home/cc2/Desktop/repositories/mutual_fund_analytics_lab/results'
 dir_tokenized_sentences = r'/home/cc2/Desktop/repositories/mutual_fund_analytics_lab/results/get_sentences/tokenized_sentences'
@@ -56,7 +57,7 @@ import functions_word_search_public_health as m_ph
 ###############################################################################
 # Import Data
 ###############################################################################
-project_folder = create_project_folder(dir_output, 'public_health_sentences')
+project_folder = create_project_folder(dir_output, 'inspect_matched_sentences')
 
 ###############################################################################
 # Function Parameters 
@@ -72,38 +73,23 @@ quality_control=True
 ph_tokens = m_ph.get_public_health_tokens()
 nd_tokens = m_ph.get_natural_disaster_tokens()
 
-###############################################################################
-# Iterate Chunked Files & Match PH Tokens
-###############################################################################
 
-frames = []
+data = pd.read_excel(dir_data + '/' + 'natural_disaster_sentence_matches.xlsx')
+data_tks = data[nd_tokens]
 
-for i in range(10):
-    logging.info(f'---- iteration => {i}')
-    chunk_filename = f'sentences_tokenized_iteration_{i}.csv'
-    chunk_data = load_file(chunk_filename, dir_tokenized_sentences)
-    
-    # Run Function
-    df_iter_result = m_ph.get_sentences_matching_tokens(
-            chunk_data, ph_tokens, i, dir_output, project_folder,
-            write2file, quality_control)
-    # Append Result DataFrame to Frames
-    frames.append(df_iter_result)
+tk_sum = data_tks.sum().reset_index()
+tk_sum.rename(columns={'index':'tokens', 0:'Count'}, inplace=True)
+tk_sum['pct_total_sentences'] = tk_sum['Count'].values / data_tks.shape[0]
+tk_sum.sort_values(by='pct_total_sentences', ascending=False, inplace=True)
 
-# Concatenate Results
-df_concat = pd.concat(frames)
-
-# Logging
-logging.info(f'---- final concatenated results dim => {df_concat.shape}')
-
-# Write Results to File
-write2excel(df_concat, dir_output, project_folder,
-        'public_health_sentence_matches.xlsx')
-
-
-
-
-
+plt.bar(x=tk_sum['tokens'].values.tolist(), height=tk_sum['pct_total_sentences'].values)
+plt.xticks(rotation='vertical')
+plt.grid(b=True)
+plt.title('Natural Disaster - Pct Sentence Match By Token')
+plt.xlabel('Tokens')
+plt.ylabel('Pct Documents')
+plt.tight_layout()
+plt.show()
 
 
 
