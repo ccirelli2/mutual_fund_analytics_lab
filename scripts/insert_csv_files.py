@@ -10,7 +10,7 @@ dir_data = r'/home/cc2/Desktop/repositories/mutual_fund_analytics_lab/results/ge
 conn = mysql.connector.connect(
         host='localhost',
         user='cc2',
-        password='Gsu2020!',
+        password='',
         database='mutual_fund_lab')
 
 

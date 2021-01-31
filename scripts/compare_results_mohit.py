@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Purpose:    Identify sentences w/ public health key words
-
+Purpose : Compare the sentence tokenized results provided by mohit
 
 Created on Wed Jan 13 18:23:56 2021
 @author: chris.cirelli
@@ -41,16 +40,18 @@ pd.set_option('display.max_rows', None)
 # Declare Variables
 ###############################################################################
 # Define directory variables
-dir_data = r'/home/cc2/Desktop/repositories/mutual_fund_analytics_lab/data'
-dir_scripts = r'/home/cc2/Desktop/repositories/mutual_fund_analytics_lab/scripts'
-dir_output = r'/home/cc2/Desktop/repositories/mutual_fund_analytics_lab/results'
-dir_tokenized_sentences = dir_output + r'/get_sentences/tokenized_sentences'
-dir_sent_matches = dir_output + r'/matching_sentences'
+dir_repo = r'/home/cc2/Desktop/repositories/mutual_fund_analytics_lab'
+dir_data = os.path.join(dir_repo, 'data')
+dir_scripts = os.path.join(dir_repo, 'scripts')
+dir_output = os.path.join(dir_repo, 'results')
+dir_tokenized_sentences = os.path.join(dir_output,
+        'get_sentences/tokenized_sentences')
+dir_sent_matches = os.path.join(dir_output, 'matching_sentences')
 
 # Append Directories to path
-sys.path.append(dir_data)
-sys.path.append(dir_scripts)
-sys.path.append(dir_output)
+sys.path.append([dir_data, dir_repo, dir_scripts, dir_output,
+    dir_tokenized_sentences, dir_sent_matches])
+
 
 ###############################################################################
 # Import Project Modules
@@ -59,6 +60,14 @@ import functions_inspect_matched_sentences as m_insp
 from functions_utility import *
 from functions_decorators import *
 import functions_word_search_public_health as m_ph
+
+###############################################################################
+# Connect to DataBase 
+###############################################################################
+
+
+
+
 
 ###############################################################################
 # Function Parameters 
@@ -79,32 +88,8 @@ nd_tokens = m_ph.get_natural_disaster_tokens()
 ###############################################################################
 # Functions 
 ###############################################################################
-"""
-df_paras = load_file('filings_clean2.csv', dir_data)
-df_sent_matches = load_file('natural_disaster_sentence_matches.csv',
-        dir_sent_matches)
-m_insp.get_paragraph_token_counts_by_filing_year(df_paras, df_sent_matches,
-        'natural_disaster', nd_tokens, dir_output, project_folder,
-        write2file)
-"""
 
-df_filing_yr_results = pd.read_csv(os.path.join(dir_output, project_folder,
-    'natural_disaster_matches_cnt_by_paragraph_by_year.csv'))
-
-
-for token in nd_tokens:
-    m_insp.plot_token_as_pct_paragraph_cnt_by_filing_yr(
-            df_filing_yr_results, token, dir_output, project_folder,
-            savefig)
-
-
-
-
-
-
-
-
-
+mycursor = conn_mysql('Gsu2020!', 'mutual_fund_lab')
 
 
 

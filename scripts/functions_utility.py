@@ -43,6 +43,15 @@ from functions_decorators import *
 ###############################################################################
 
 
+def conn_mysql(password, database):                                             
+    host = 'localhost',                                                         
+    user='cc2',                                                                 
+    password=password,                                                          
+    database=database)                                                          
+    return mycursor = conn.cursor()
+
+
+
 def load_file(filename, directory, project_folder=None):
     """
     Generic function load Excel and CSV files.

@@ -11,7 +11,7 @@ data = pd.read_csv(os.path.join(dir_data, filename))
 conn = mysql.connector.connect(
         host='localhost',
         user='cc2',
-        password='Gsu2020!',
+        password='',
         database='mutual_fund_lab')
 
 
