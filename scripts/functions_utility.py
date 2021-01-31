@@ -53,6 +53,9 @@ def conn_mysql(password, database):
     my_cursor = conn.cursor()
     return conn, my_cursor 
 
+@my_timeit
+def load_mysql_data(conn, query):
+    return pd.read_sql(query, conn)
 
 def load_file(filename, directory, project_folder=None):
     """
