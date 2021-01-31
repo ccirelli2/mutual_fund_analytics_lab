@@ -47,10 +47,12 @@ dir_output = os.path.join(dir_repo, 'results')
 dir_tokenized_sentences = os.path.join(dir_output,
         'get_sentences/tokenized_sentences')
 dir_sent_matches = os.path.join(dir_output, 'matching_sentences')
+dir_mohit = os.path.join(dir_output, 'mohit')
+
 
 # Append Directories to path
 sys.path.append([dir_data, dir_repo, dir_scripts, dir_output,
-    dir_tokenized_sentences, dir_sent_matches])
+    dir_tokenized_sentences, dir_sent_matches, dir_mohit])
 
 
 ###############################################################################
@@ -64,9 +66,18 @@ import functions_word_search_public_health as m_ph
 ###############################################################################
 # Connect to DataBase 
 ###############################################################################
+conn, mycursor = conn_mysql('Gsu2020!', 'mutual_fund_lab')
 
 
+###############################################################################
+# Import Data
+###############################################################################
+project_folder = create_project_folder(dir_output, 'inspect_matched_toks_natural_disaster')
+ph_tokens = m_ph.get_public_health_tokens()
+nd_tokens = m_ph.get_natural_disaster_tokens()
 
+# Mohit Data files
+mohit_ph = load_file('public_health_sample.csv', dir_mohit)
 
 
 ###############################################################################
@@ -78,42 +89,14 @@ pplot=True
 savefig=True
 
 ###############################################################################
-# Import Data
-###############################################################################
-project_folder = create_project_folder(dir_output, 'inspect_matched_toks_natural_disaster')
-ph_tokens = m_ph.get_public_health_tokens()
-nd_tokens = m_ph.get_natural_disaster_tokens()
-
-
-###############################################################################
 # Functions 
 ###############################################################################
 
-mycursor = conn_mysql('Gsu2020!', 'mutual_fund_lab')
+tokens = mohit_ph['tokens'].iloc[0]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+test = tokens.split(', ')
+for sent in test:
+    print(sent)
 
 
 

@@ -17,6 +17,7 @@ logging.basicConfig(level=logging.INFO)
 ###############################################################################
 # Import Libraries
 ###############################################################################
+import mysql.connector
 import pandas as pd
 from tqdm import tqdm
 import re
@@ -44,12 +45,13 @@ from functions_decorators import *
 
 
 def conn_mysql(password, database):                                             
-    host = 'localhost',                                                         
-    user='cc2',                                                                 
-    password=password,                                                          
-    database=database)                                                          
-    return mycursor = conn.cursor()
-
+    conn=mysql.connector.connect(
+            host = 'localhost',                                                         
+            user='cc2',                                                                 
+            password=password,                                                          
+            database=database)
+    my_cursor = conn.cursor()
+    return conn, my_cursor 
 
 
 def load_file(filename, directory, project_folder=None):
@@ -114,9 +116,9 @@ def write2csv(dataframe, dir_output, project_folder=None, filename=''):
 
     """
     if project_folder:
-        path = dir_output + '/' + project_folder + '/' + filename
+        path=os.path.join(dir_output, project_folder, filename)
     else:
-        path = dir_output + '/' + filename
+        path=os.path.join(dir_output, filename) 
  
     dataframe.to_csv(path)
     logging.debug(f'---- {filename} writen to directory {dir_output}')
