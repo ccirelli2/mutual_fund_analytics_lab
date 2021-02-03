@@ -32,6 +32,9 @@ def concat_sentence_dataframes(data_paragraphs, dir_data, dir_sent_toks,
     """
     Function to concatenate all sentence dataframes into a single doc.
 
+    The documents are in 10 separate files.  This function simply concats
+    those separate documents.
+
     Args:
         data_paragraphs : dataframe with all paragraph data
         dir_data:
@@ -75,7 +78,8 @@ def concat_sentence_dataframes(data_paragraphs, dir_data, dir_sent_toks,
 def get_paragraph_token_counts_by_filing_year(df_paras, df_matches, topic,      
         tokens, dir_output, project_folder, write2file):                 
     """                                                                         
-    Function to obtain the count of paragraphs and sentences matches per yr.    
+    Function to obtain the token matches as an absolute count and percentage
+    of the count of paragraphs by filing year.     
                                                                                 
     Args:                                                                       
         df_paras:   DataFrame; paragraph data                                   
@@ -166,7 +170,45 @@ def plot_token_as_pct_paragraph_cnt_by_filing_yr(df_filing_yr,
     return None                                                                 
                                                                                 
 
-
+def get_sum_token_match_freq_as_pct_num_sent_matched(df_sent_matches,           
+        df_token_matches, dir_output, project_folder, write2file,               
+        pplot, savefig):                                                        
+    """                                                                         
+    Function to get the ratio of the number of token matches to                 
+    number of sentences matched.  So what of matches sentences were             
+    comprised by each token.                                                    
+                                                                                
+    Args:                                                                       
+        df_sent_matches: DataFrame; All matched sentences                       
+        df_token_matches: DataFrame; Frequency of matched tokens                
+        dir_output: String; Output directory                                    
+        project_folder:                                                         
+        write2file:                                                             
+        pplot:                                                                  
+        savefig:                                                                
+                                                                                
+    Returns:                                                                    
+                                                                                
+    Pandas series w/ sum matches for each token / count matched sentences.         
+    """                                                                         
+    sum_tok_matches = df_token_freq_by_filing_year[ph_tokens].sum().sort_values(
+            ascending=False)                                                    
+                                                                                
+    tok_match_pct_sent_match = sum_tok_matches / df_sent_matches.shape[0]          
+                                                                                
+    if pplot:                                                                   
+        plt.bar(x=tok_match_pct_sent_match.index,                               
+                height=tok_match_pct_sent_match.values)                         
+        plt.grid(b=True)                                                        
+        plt.title('Sum Token Matches As Pct Total Matched Sentences')           
+        plt.xlabel('Tokens')                                                    
+        plt.xticks(rotation=90)                                                 
+        plt.ylabel('Pct Total Sentences')                                       
+        plt.tight_layout()                                                      
+        plt.show()                                                              
+    # Return results                                                            
+    return tok_match_pct_sent_match                                             
+                                       
 
 
 
