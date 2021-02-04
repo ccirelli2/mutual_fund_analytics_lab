@@ -110,7 +110,7 @@ def sentence_segmenter(data, mode, tokenizer, sample_pct, max_num_tokens,
         logging.info(f'---- Generating Data sample size => {sample_pct}')       
         data = data.sample(frac=sample_pct, random_state=1)                     
                                                                                 
-    # Get List of Sentences                                                     
+    # Get List of Paragraphs & Keys                                                     
     list_paragraphs = data['principal_risks'].values.tolist()                   
     list_pkeys = data['accession#'].values.tolist()                             
                                                                                 

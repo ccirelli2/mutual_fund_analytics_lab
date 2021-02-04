@@ -22,7 +22,7 @@ dir_matching_sent = r'/home/cc2/Desktop/repositories/mutual_fund_analytics_lab/r
 conn = mysql.connector.connect(
         host='localhost',
         user='cc2',
-        password='Gsu2020!',
+        password='',
         database='mutual_fund_lab')
 mycursor = conn.cursor()
 
