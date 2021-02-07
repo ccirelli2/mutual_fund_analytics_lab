@@ -43,7 +43,7 @@ from functions_decorators import *
 # Function
 ###############################################################################
 
-
+@my_timeit
 def conn_mysql(password, database):                                             
     conn=mysql.connector.connect(
             host = 'localhost',                                                         

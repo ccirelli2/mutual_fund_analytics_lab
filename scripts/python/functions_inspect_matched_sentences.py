@@ -213,21 +213,109 @@ def get_sum_token_match_freq_as_pct_num_sent_matched(df_sent_matches,
 
 
 
+@my_timeit
+def get_match_sent_pct_all_sent_by_filing_year(paras, sent_matches,             
+        sent_all):                                                              
+    """                                                                         
+    Function to get the ratio of matches sentences to total sentences by        
+    filing year.                                                                
+                                                                                
+    Args:                                                                       
+        paras: DataFrame; all paragraphs and accession key.                     
+        sent_all: DataFrame; all sentences                                      
+        sent_matches: DataFrame; matches sentences and accession key.           
+                                                                                
+    Returns:                                                                    
+       df_results: DataFrame; includes cnt of sentences, cnt of matched         
+        sentences and pct matched sentences by filing year.                     
+                                                                                
+    """                                                                         
+                                                                                
+    ########################################################################### 
+    # Get Sentence Count By Filing Year                                         
+    ########################################################################### 
+    sent_cnt_by_yr = sent_all.groupby('filing_year')[                              
+            'filing_year'].count()                                                 
+                                                                                   
+    ########################################################################### 
+    # Sentence Matches - Add Filing | Create Binary Match Column                   
+    ########################################################################### 
+    para_filing_yr = paras = paras[['accession#', 'filing_year']]                  
+    sent_matches = pd.merge(                                                       
+            sent_matches, paras, left_on='accession#', right_on='accession#')   
+    sent_matches['filing_year'] = [                                                
+            int(x) for x in df_merged['filing_year'].values]                       
+    sent_matches['match_any'] = list(map(lambda x: 1 if x > 0 else x,              
+        df_merged['sum_matches'].values))                                          
+                                                                                   
+    ########################################################################### 
+    # Get Ratios : Sum Matches, Sum Se                                             
+    ########################################################################### 
+    cnt_sentences = sent_all_cnt_by_yr.values                                      
+    cnt_sent_matches = sent_matches.groupby('filing_year')['match_any'].sum()   
+    pct_sent_matches = (cnt_matches.values / cnt_sentences)*100            
+
+    ########################################################################### 
+    # Build Results DataFrame                                                      
+    ########################################################################### 
+    df_results = pd.DataFrame({                                                    
+        'filing_year': cnt_matches.index,                                       
+        'cnt_sentences': cnt_sentences,                                         
+        'cnt_matches': cnt_matches.values,                                      
+        'pct_matches':pct_matches})                                             
+                                                                                
+    ########################################################################### 
+    # Plot Results                                                              
+    ########################################################################### 
+    plt.bar(x=df_results['filing_year'].values,                                 
+            height=df_results['pct_matches'].values, alpha=0.5)                 
+    plt.title('Natural Disaster - Pct Matches Sentences By Filing Year')        
+    plt.xlabel('Filing Year')                                                   
+    plt.ylabel('Pct')                                                           
+    plt.grid(b=True)                                                            
+    plt.show()                                                                  
+                                                                                
+    # Return Results DataFrame                                                  
+    return df_results  
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+def get_matched_sent_min_num_toks(conn, table, min_num_toks):                   
+    """                                                                         
+    Function that just calls a sql query to obtain matching sentences           
+    for which the number of tokes is < a certain threshold                      
+    Args:                                                                       
+        conn:                                                                      
+        table:                                                                     
+        min_num_toks:                                                              
+                                                                                
+    Returns:                                                                       
+                                                                                   
+                                                                                
+    """                                                                         
+                                                                                
+    query = """                                                                 
+            SELECT pkey_para,                                                   
+                   sentences,                                                   
+                   LENGTH(sentences) AS 'NumCharsWithSpaces',                    
+                   LENGTH(REPLACE(sentences, ' ', '')) AS 'NumCharsNoSpaces',   
+                   LENGTH(sentences) - LENGTH(REPLACE(sentences, ' ', ''))+1 AS 'NumTokens',
+                   CASE WHEN sum_matches > 0 THEN 1 ELSE 0 END 'TokenMatch'     
+            FROM mutual_fund_lab.{}                                                
+            WHERE LENGTH(sentences)-LENGTH(REPLACE(sentences, ' ', ''))+1 <= {};
+                                                                                
+            """.format(table, min_num_toks)                                     
+    data = pd.read_sql(query, conn)                                             
+    return data                                                                 
+                                                                                
+df_ph = get_matched_sent_min_num_toks(                                          
+        conn, 'public_health_sentence_matches', 20)                             
+df_ph.to_excel(os.path.join(dir_results, 'inspect_matched_sentences',           
+    'public_health_matched_sentences_minnumtoks_20.xlsx'))                      
+                                                                                
+df_nd = get_matched_sent_min_num_toks(                                          
+        conn, 'natural_disaster_sentence_matches', 20)                          
+df_nd.to_excel(os.path.join(dir_results, 'inspect_matched_sentences',           
+    'natural_disaster_matched_sentences_minnumtoks_20.xlsx')) 
 
 
 
