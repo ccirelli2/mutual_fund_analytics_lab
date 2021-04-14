@@ -279,43 +279,15 @@ def get_match_sent_pct_all_sent_by_filing_year(paras, sent_matches,
     return df_results  
 
 
-def get_matched_sent_min_num_toks(conn, table, min_num_toks):                   
-    """                                                                         
-    Function that just calls a sql query to obtain matching sentences           
-    for which the number of tokes is < a certain threshold                      
-    Args:                                                                       
-        conn:                                                                      
-        table:                                                                     
-        min_num_toks:                                                              
-                                                                                
-    Returns:                                                                       
-                                                                                   
-                                                                                
-    """                                                                         
-                                                                                
-    query = """                                                                 
-            SELECT pkey_para,                                                   
-                   sentences,                                                   
-                   LENGTH(sentences) AS 'NumCharsWithSpaces',                    
-                   LENGTH(REPLACE(sentences, ' ', '')) AS 'NumCharsNoSpaces',   
-                   LENGTH(sentences) - LENGTH(REPLACE(sentences, ' ', ''))+1 AS 'NumTokens',
-                   CASE WHEN sum_matches > 0 THEN 1 ELSE 0 END 'TokenMatch'     
-            FROM mutual_fund_lab.{}                                                
-            WHERE LENGTH(sentences)-LENGTH(REPLACE(sentences, ' ', ''))+1 <= {};
-                                                                                
-            """.format(table, min_num_toks)                                     
-    data = pd.read_sql(query, conn)                                             
-    return data                                                                 
-                                                                                
-df_ph = get_matched_sent_min_num_toks(                                          
-        conn, 'public_health_sentence_matches', 20)                             
-df_ph.to_excel(os.path.join(dir_results, 'inspect_matched_sentences',           
-    'public_health_matched_sentences_minnumtoks_20.xlsx'))                      
-                                                                                
-df_nd = get_matched_sent_min_num_toks(                                          
-        conn, 'natural_disaster_sentence_matches', 20)                          
-df_nd.to_excel(os.path.join(dir_results, 'inspect_matched_sentences',           
-    'natural_disaster_matched_sentences_minnumtoks_20.xlsx')) 
+
+
+
+
+
+
+
+
+
 
 
 

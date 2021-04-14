@@ -51,7 +51,7 @@ sys.path.append(dir_output)
 ###############################################################################
 from functions_utility import *
 from functions_decorators import *
-import functions_word_search_public_health as m_ph
+import functions_token_matching as m_ph
 
 ###############################################################################
 # Import Data
